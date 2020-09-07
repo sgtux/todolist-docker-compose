@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import axios from 'axios'
 
+let urlApi = ''
 
 function App() {
 
@@ -10,21 +11,25 @@ function App() {
   const [todoItems, setTodoItems] = useState([])
   const [editItem, setEditItem] = useState({})
 
-  useEffect(() => {
+  useEffect(async () => {
+    const response = await axios.get('/apihost')
+    urlApi = `http://${response.data}`
     refresh()
   }, [])
 
   function refresh() {
+
     setDescription('')
     setEditItem(null)
-    axios.get('http://localhost:5000/todo')
+
+    axios.get(`${urlApi}/todo`)
       .then(res => setTodoItems(res.data))
       .catch(err => handleError(err))
   }
 
   function doneChanged(item) {
     item.done = !item.done
-    axios.put('http://localhost:5000/todo', item)
+    axios.put(`${urlApi}/todo`, item)
       .then(res => refresh())
       .catch(err => handleError(err))
   }
@@ -32,11 +37,11 @@ function App() {
   function save() {
     const item = editItem ? { ...editItem, description } : { description }
     if (item.id)
-      axios.put('http://localhost:5000/todo', item)
+      axios.put(`${urlApi}/todo`, item)
         .then(res => refresh())
         .catch(err => handleError(err))
     else
-      axios.post('http://localhost:5000/todo', item)
+      axios.post(`${urlApi}/todo`, item)
         .then(res => refresh())
         .catch(err => handleError(err))
   }
@@ -48,12 +53,13 @@ function App() {
 
   function remove(id) {
     const item = { description }
-    axios.delete(`http://localhost:5000/todo/${id}`, item)
+    axios.delete(`${urlApi}/todo/${id}`, item)
       .then(res => refresh())
       .catch(err => handleError(err))
   }
 
   function handleError(err) {
+    console.log(err)
     setError(err.response.data)
     setTimeout(() => setError(''), 2000)
   }
@@ -67,7 +73,7 @@ function App() {
           <button style={{ marginLeft: 5 }} onClick={() => { setEditItem(null); setDescription('') }} type="button" className="btn btn-cancel">CANCEL</button>
           <button style={{ marginLeft: 5 }} onClick={() => save()} type="button" className="btn btn-add">SAVE</button>
           <div>
-            <span hidden={!error} className="error-message">teste</span>
+            <span hidden={!error} className="error-message">{error}</span>
           </div>
         </div>
         <table className="todo-table">
