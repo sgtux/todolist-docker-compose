@@ -1,0 +1,33 @@
+version: '2.2'
+
+services:
+
+  todolist-client:
+    environment: 
+      - API_HOST=172.20.20.20
+    image: todolist-client:1.0
+    networks:
+      todolist-network:
+        ipv4_address: 172.20.20.10
+
+  todolist-api:
+    environment: 
+      - DATABASE_CONNECTION_STRING=Host=172.20.20.30;Port=5432;Pooling=true;Database=site;User Id=site;Password=123
+    image: todolist-api:1.0
+    networks:
+      todolist-network:
+        ipv4_address: 172.20.20.20
+
+  todolist-database:
+    image: todolist-database:1.0
+    networks:
+      todolist-network:
+        ipv4_address: 172.20.20.30
+
+networks:
+
+  todolist-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.20.0/24
