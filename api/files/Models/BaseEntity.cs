@@ -1,4 +1,4 @@
-namespace Site.Models
+namespace Api.Models
 {
     public abstract class BaseEntity
     {
