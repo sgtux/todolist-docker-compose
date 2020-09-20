@@ -25,11 +25,11 @@ namespace Api.Controllers
         public IActionResult Post([FromBody] LoginModel model)
         {
             if (model is null || string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Password))
-                return Unauthorized();
+                return Unauthorized("Invalid Credentials.");
 
             var user = _userService.FindByEmail(model.Email);
             if (user?.Password != model.Password)
-                return Unauthorized();
+                return Unauthorized("Invalid Credentials.");
 
             var claims = new Dictionary<string, string>();
             claims.Add(ClaimTypes.Sid, user.Id.ToString());
