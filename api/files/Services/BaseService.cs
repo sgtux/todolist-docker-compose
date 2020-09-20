@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using Dapper;
 using Npgsql;
-using Site.Config;
-using Site.Models;
+using Api.Config;
+using Api.Models;
 using static System.Console;
 
-namespace Site.Repository
+namespace Api.Services
 {
     public abstract class BaseService<T> where T : BaseEntity
     {
