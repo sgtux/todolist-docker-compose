@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Api.Config;
 using Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -22,6 +21,8 @@ namespace Api
         public void ConfigureServices(IServiceCollection services)
         {
             var appConfig = new AppConfig();
+            services.AddHttpsRedirection(options => options.HttpsPort = 443);
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -42,14 +43,6 @@ namespace Api
 
             services.AddControllers();
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader());
-            });
-
             services.AddSingleton<AppConfig>(appConfig);
             services.AddScoped<TodoService>();
             services.AddScoped<UserService>();
@@ -57,14 +50,19 @@ namespace Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-                app.UseDeveloperExceptionPage();
-
-            app.UseCors("CorsPolicy");
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseCors(policy =>
+            {
+                policy.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+            });
+
+            app.UseHttpsRedirection();
 
             app.UseEndpoints(endpoints =>
             {

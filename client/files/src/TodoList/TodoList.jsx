@@ -9,15 +9,16 @@ export function TodoList({ urlApi, token }) {
     const [error, setError] = useState('')
     const [todoItems, setTodoItems] = useState([])
     const [editItem, setEditItem] = useState({})
+    const [filter, setFilter] = useState('')
 
-    useEffect(async () => refresh(), [])
+    useEffect(() => refresh(), [])
 
-    function refresh() {
+    function refresh(queryFilter = '') {
 
         setDescription('')
         setEditItem(null)
 
-        axios.get(`${urlApi}/todo`, requestConfig)
+        axios.get(`${urlApi}/todo?filter=${queryFilter}`, requestConfig)
             .then(res => setTodoItems(res.data))
             .catch(err => handleError(err))
     }
@@ -59,6 +60,11 @@ export function TodoList({ urlApi, token }) {
         setTimeout(() => setError(''), 2000)
     }
 
+    function filterChanged(filter) {
+        setFilter(filter)
+        refresh(filter)
+    }
+
     return (
         <div className="App">
             <header className="App-header">
@@ -71,6 +77,7 @@ export function TodoList({ urlApi, token }) {
                         <span hidden={!error} className="error-message">{error}</span>
                     </div>
                 </div>
+                <input value={filter} onChange={e => filterChanged(e.target.value)} placeholder="Filter" />
                 <table className="todo-table">
                     <thead>
                         <tr>

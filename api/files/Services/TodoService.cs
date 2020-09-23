@@ -8,7 +8,7 @@ namespace Api.Services
     {
         public TodoService(AppConfig config) : base(config) { }
 
-        public IEnumerable<TodoItem> GetAll(int userId) => Query($"SELECT \"Id\", \"Description\", \"Done\" FROM \"{TableName}\" WHERE \"UserId\"=@UserId ORDER BY \"Id\"", new { UserId = userId });
+        public IEnumerable<TodoItem> GetAll(int userId, string filter) => Query($"SELECT \"Id\", \"Description\", \"Done\" FROM \"{TableName}\" WHERE \"UserId\"=@UserId AND \"Description\" LIKE '%{filter}%' ORDER BY \"Id\"", new { UserId = userId });
 
         public void Add(TodoItem todoItem)
         {

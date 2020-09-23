@@ -9,10 +9,7 @@ function App() {
   const [token, setToken] = useState('')
   const [urlApi, setUrlApi] = useState('')
 
-  useEffect(async () => {
-    const response = await axios.get('/apihost')
-    setUrlApi(`http://${response.data}/api`)
-  }, [])
+  useEffect(() => axios.get('/apihost').then(res => setUrlApi(`https://${res.data}/api`)), [])
 
   function tokenChanged(token) {
     setToken(token)
