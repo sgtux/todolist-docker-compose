@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios'
 
 export function Login({ urlApi, tokenChanged }) {
@@ -6,15 +6,25 @@ export function Login({ urlApi, tokenChanged }) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
+    const [loading, setLoading] = useState(false)
 
     function login() {
+        if (loading)
+            return
+        setLoading(true)
         axios.post(`${urlApi}/token`, { email, password })
-            .then(res => tokenChanged(res.data.token))
-            .catch(err => handleError(err))
+            .then(res => {
+                setLoading(false)
+                tokenChanged(res.data.token)
+            })
+            .catch(err => {
+                setLoading(false)
+                handleError(err)
+            })
     }
 
     function handleError(err) {
-        setError(err.response.data)
+        setError((err.response || {}).data || err.toJSON().message)
         setTimeout(() => setError(''), 2000)
     }
 

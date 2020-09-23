@@ -17,7 +17,7 @@ namespace Api
         public TodoController(TodoService service) => _service = service;
 
         [HttpGet]
-        public ActionResult Get() => Ok(_service.GetAll(UserId));
+        public ActionResult Get([FromQuery] string filter) => Ok(_service.GetAll(UserId, filter));
 
         [HttpPost]
         public ActionResult Add([FromBody] TodoItem todoItem)

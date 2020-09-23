@@ -12,4 +12,4 @@ RUN apt update && \
   rm -rf app .nuget .local && \
   apt clean
 WORKDIR /root/publish
-CMD [ "/usr/bin/dotnet", "/root/publish/Api.dll", "--urls=http://*" ]
+CMD [ "/usr/bin/dotnet", "/root/publish/Api.dll", "--urls=https://*" ]
