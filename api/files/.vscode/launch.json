@@ -19,8 +19,10 @@
             },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
-                "DATABASE_CONNECTION_STRING": "Host=172.17.0.2;Port=5432;Pooling=true;Database=site;User Id=site;Password=123",
-                "JWT_KEY": "6e4f26205770397b6b6c2a7952785a5f567e6c375b706231767031507c"
+                "DATABASE_CONNECTION_STRING": "Host=172.20.20.30;Port=5432;Pooling=true;Database=site;User Id=site;Password=123",
+                "JWT_KEY": "6e4f26205770397b6b6c2a7952785a5f567e6c375b706231767031507c",
+                "TOKEN_EXPIRY_MINUTES": "1",
+                "ALLOWED_ORIGINS": "http://localhost:3002"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"

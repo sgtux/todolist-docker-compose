@@ -33,7 +33,7 @@ namespace Api.Controllers
 
             var claims = new Dictionary<string, string>();
             claims.Add(ClaimTypes.Sid, user.Id.ToString());
-            var token = new JwtTokenBuilder(_config.JwtKey, claims).Build();
+            var token = new JwtTokenBuilder(_config.JwtKey, _config.TokenExpiryMinutes, claims).Build();
             return Ok(new { token = token.Value });
         }
     }

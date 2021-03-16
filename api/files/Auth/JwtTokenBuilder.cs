@@ -10,25 +10,26 @@ namespace Api.Auth
 {
     public class JwtTokenBuilder
     {
-        private int expiryInMinutes = 60 * 24 * 7;
+        private readonly int _tokenExpiryMinutes;
 
-        private SecurityKey key;
+        private readonly SecurityKey _key;
 
-        private Dictionary<string, string> claims;
+        private Dictionary<string, string> _claims;
 
-        public JwtTokenBuilder(string key, Dictionary<string, string> claims)
+        public JwtTokenBuilder(string key, int tokenExpiryMinutes, Dictionary<string, string> claims)
         {
-            this.key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key));
-            this.claims = claims;
+            _key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key));
+            _claims = claims;
+            _tokenExpiryMinutes = tokenExpiryMinutes;
         }
 
         public JwtToken Build()
         {
             var token = new JwtSecurityToken(
-              claims: claims.Select(item => new Claim(item.Key, item.Value)).ToList(),
-                expires: DateTime.UtcNow.AddMinutes(expiryInMinutes),
+              claims: _claims.Select(item => new Claim(item.Key, item.Value)).ToList(),
+                expires: DateTime.UtcNow.AddMinutes(_tokenExpiryMinutes),
                 signingCredentials: new SigningCredentials(
-                    key,
+                    _key,
                     SecurityAlgorithms.HmacSha256
                 )
             );

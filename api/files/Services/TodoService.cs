@@ -27,5 +27,11 @@ namespace Api.Services
             var query = $"DELETE FROM \"{TableName}\" WHERE \"Id\" = @Id AND \"UserId\" = @UserId";
             Execute(query, new { Id = id, UserId = userId });
         }
+
+        public void Remove(int userId)
+        {
+            var query = $"DELETE FROM \"{TableName}\" WHERE \"UserId\" = {userId}";
+            Execute(query);
+        }
     }
 }

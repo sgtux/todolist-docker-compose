@@ -11,9 +11,14 @@ namespace Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly HostEnvironment _hostEnvironment;
+
+        private const string APP_CORS_POLICY = "CORS_POLICY";
+
+        public Startup(IWebHostEnvironment env, IConfiguration configuration)
         {
             Configuration = configuration;
+            _hostEnvironment = new HostEnvironment(env);
         }
 
         public IConfiguration Configuration { get; }
@@ -21,7 +26,21 @@ namespace Api
         public void ConfigureServices(IServiceCollection services)
         {
             var appConfig = new AppConfig();
-            services.AddHttpsRedirection(options => options.HttpsPort = 443);
+
+            if (_hostEnvironment.IsProduction)
+                services.AddHttpsRedirection(options => options.HttpsPort = 443);
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(APP_CORS_POLICY, builder =>
+                {
+                    var origins = string.Join(";", appConfig.AllowedOrigins);
+                    System.Console.WriteLine($"Using cors origins: {origins}");
+                    builder.WithOrigins(appConfig.AllowedOrigins)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
 
             services.AddAuthentication(options =>
             {
@@ -52,17 +71,15 @@ namespace Api
         {
             app.UseRouting();
 
+            app.UseCors(APP_CORS_POLICY);
+
+            // app.UseHsts();
+
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseCors(policy =>
-            {
-                policy.AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader();
-            });
-
-            app.UseHttpsRedirection();
+            if (_hostEnvironment.IsProduction)
+                app.UseHttpsRedirection();
 
             app.UseEndpoints(endpoints =>
             {

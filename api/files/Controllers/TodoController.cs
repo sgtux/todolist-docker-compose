@@ -39,6 +39,13 @@ namespace Api
             return Ok();
         }
 
+        [HttpDelete]
+        public ActionResult Delete()
+        {
+            _service.Remove(UserId);
+            return Ok();
+        }
+
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
